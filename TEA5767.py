@@ -17,7 +17,7 @@ class Radio:
         self.search_mode = False
         self.search_direction = 1
         self.search_adc_level = 5
-        self.stereo_mode = True
+        self.stereo_mode = stereo
         self.stereo_noise_cancelling_mode = noise_cancel
         self.high_cut_mode = high_cut
         self.is_ready = False
