@@ -5,12 +5,12 @@ from machine import Pin, I2C
 
 class Radio:
     
-    def __init__(self, freq=0.0, scl=5, sda=4, addr=0x60, debug=False,
+    def __init__(self, freq=0.0, scl=5, sda=4, addr=0x60, debug=False, band="US", 
                  stereo=True, soft_mute=True, noise_cancel=True, high_cut=True):
         self._i2c = I2C(scl=Pin(scl), sda=Pin(sda), freq=400000)
         self._address = addr
         self.frequency = freq
-        self.band_limits = "US"
+        self.band_limits = band
         self.standby_mode = False
         self.mute_mode = False
         self.soft_mute_mode = soft_mute
