@@ -28,26 +28,19 @@ The module would immediately tune on the frequency. If you did not specify a fre
 There are also some other options:
 
 ```python
-radio = TEA5767.Radio(freq=99.7, scl=5, sda=4, debug=True, stereo=True, soft_mute=True, noise_cancel=True, high_cut=True)
+radio = TEA5767.Radio(freq=99.7, scl=5, sda=4, addr=0x60, debug=True, band="US", 
+                      stereo=True, soft_mute=True, noise_cancel=True, high_cut=True)
 ```
 
 * scl = SCL pin (default 5 of ESP8266 boards)
 * sda = SDA pin (default 4 of ESP8266 boards)
-* debug = output some info text via REPL/serial port whenever you read data from the module.
+* addr = I2C address (default 0x60)
+* debug = output some info text via REPL/serial port window whenever you read data from the module.
+* band = band limits; "US" (default) = US/Europe band (87.5-108 MHz), "JP" = Japan band (76-91 MHz)
 * stereo = stereo mode (default True; set as False = forced mono)
 * soft_mute = soft mute (default True)
 * noise_cancel = stereo noise cancelling (default True)
 * high_cut = high cut control (default True)
-
-if you turn on the debug option, you'll see something like
-
-```
-FM frequency: 99.7 MHz
-In search mode: False
-Station ready: True
-Station has stereo: True
-Signal ADC level: 10
-```
 
 ## Import on ESP32
 
@@ -106,3 +99,31 @@ radio.standby(True)
 Mute is simply turn off the sound. If you want to save more power, use radio.standby().
 
 The TEA5767 also allows you to turn off right or left speaker, however I did not implement these functions.
+
+## Read data
+
+You can retrieve some info from the TEA5767:
+
+```python
+radio.read()
+```
+
+If the debug option in initialization is set to True, you'll see some output text in REPL/serial port window:
+
+```
+FM frequency: 99.7 MHz
+In search mode: False
+Station ready: True
+Station has stereo: True
+Signal ADC level: 10
+```
+
+You can also read these info via
+
+```python
+my_variable = radio.frequency
+my_variable = radio.search_mode
+my_variable = radio.is_ready
+my_variable = radio.is_stereo
+my_variable = radio.signal_adc_level
+```
