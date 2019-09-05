@@ -23,7 +23,7 @@ import TEA5767
 radio = TEA5767.Radio(freq=99.7)
 ```
 
-The module would immediately tune on the frequency.
+The module would immediately tune on the frequency. If you did not specify a frequency, the TEA5767 would not do anything.
 
 There are also some other options:
 
@@ -64,7 +64,9 @@ Directly choosing another frequency:
 radio.set_frequency(freq=104.9)
 ```
 
-Or change the frequency bit by bit:
+The TEA5767 would turn on the new frequency immediately.
+
+Or you can change the frequency bit by bit, like turning a tuning knob on radios:
 
 ```python
 radio.change_freqency(change=0.1)
@@ -73,11 +75,10 @@ radio.change_freqency(change=-0.1)
 
 ## Search mode
 
-You can set the TEA5756 to auto-select a possible working station near a specific frequency.
+You can set the TEA5756 to auto-select a possible working station near a specific frequency:
 
 ```python
 radio.search(True)
-radio.search(False)
 radio.search(mode=True, dir=1, adc=5)
 radio.search(mode=True, freq=90.0)
 ```
@@ -89,6 +90,12 @@ When the search mode is on (True), the actual frequency may change right after y
 
 And if you change frequency by using radio.change_freqency(), the search direction will be set to the same direction of frequency change.
 
+Turn the search mode off is simply
+
+```python
+radio.search(False)
+```
+
 ## Mute/standby
 
 ```python
@@ -97,3 +104,5 @@ radio.standby(True)
 ```
 
 Mute is simply turn off the sound. If you want to save more power, use radio.standby().
+
+The TEA5767 also allows you to turn off right or left speaker, however I did not implement these functions.
