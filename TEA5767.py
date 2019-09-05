@@ -1,4 +1,4 @@
-# MicroPython driver for TEA5767 FM radio module by Alan Wang
+# MicroPython ESP8266/ESP32 driver for TEA5767 FM radio module by Alan Wang
 # Datasheet: https://www.sparkfun.com/datasheets/Wireless/General/TEA5767.pdf
 
 from machine import Pin, I2C
@@ -6,7 +6,7 @@ from machine import Pin, I2C
 class Radio:
     
     def __init__(self, freq=0.0, scl=5, sda=4, addr=0x60, debug=False,
-                 soft_mute=False, noise_cancel=False, high_cut=False):
+                 stereo=True, soft_mute=True, noise_cancel=True, high_cut=True):
         self._i2c = I2C(scl=Pin(scl), sda=Pin(sda), freq=400000)
         self._address = addr
         self.frequency = freq
@@ -38,12 +38,12 @@ class Radio:
             self.search_direction = 1 if change >= 0 else 0
             self.update()
 
-    def search(self, mode=True, dir=1, adclvl=5, freq=0.0):
+    def search(self, mode=True, dir=1, adc=5, freq=0.0):
         if freq > 0.0:
             self.frequency = freq
         self.search_mode = mode
         self.search_direction = dir
-        self.search_adc_level = adclvl if adclvl in [10, 7, 5, 0] else 5
+        self.search_adc_level = adc if adc in [10, 7, 5, 0] else 5
         self.update()
 
     def mute(self, mode=True):
