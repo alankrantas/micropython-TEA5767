@@ -129,3 +129,31 @@ my_variable = radio.is_ready
 my_variable = radio.is_stereo
 my_variable = radio.signal_adc_level
 ```
+
+## A simplified version
+
+If you just want to tune the frequency of TEA5767, you can use code as short as below (simply paste it into your script):
+
+```python
+from machine import Pin, I2C
+
+i2c = I2C(scl=Pin(5), sda=Pin(4), freq=400000)
+
+def radio_frequency(freq):
+    freqB = 4 * (freq * 1000000 + 225000) / 32768
+    data = bytearray(5)
+    data[0] = int(freqB) >> 8
+    data[1] = int(freqB) & 0XFF
+    data[2] = 0X90
+    data[3] = 0X1E
+    data[4] = 0X00
+    i2c.writeto(0x60, data)
+    
+radio_frequency(99.7)
+```
+
+Call radio_frequency() to change the radio frequency.
+
+This code does not enable search mode but also turns on stereo mode, soft mute, stereo noise cancelling and high cut.
+
+For ESP32 boards SCL pin=22 and SDA pin=21.
