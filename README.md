@@ -4,7 +4,7 @@
 
 [TEA5767 modules](https://www.sparkfun.com/datasheets/Wireless/General/TEA5767.pdf) are one of the cheaper FM radio receiver modules, which allow you to build DIY FM radios real quick.
 
-This is the driver for MicroPython on ESP8266/ESP32 boards. I've tested it on my NodeMCU V2 (ESP8266) and BPI:bit (ESP32).
+This is the driver for MicroPython on ESP8266/ESP32 boards. I've tested it on my NodeMCU V2, WeMos D1 mini (ESP8266s running firmware esp8266-20190529-v1.11) and BPI:bit (ESP32 running esp32-20190906-v1.11).
 
 ## Wiring
 
@@ -23,7 +23,7 @@ import TEA5767
 radio = TEA5767.Radio(freq=99.7)
 ```
 
-The module would immediately tune on the frequency. If you did not specify a frequency, the TEA5767 would not do anything.
+The module would immediately tune to the frequency. If you did not specify a frequency here, the TEA5767 would not do anything.
 
 There are also some other options:
 
@@ -32,10 +32,11 @@ radio = TEA5767.Radio(freq=99.7, scl=5, sda=4, addr=0x60, debug=True, band="US",
                       stereo=True, soft_mute=True, noise_cancel=True, high_cut=True)
 ```
 
+* freq = FM frequency
 * scl = SCL pin (default 5 of ESP8266 boards)
 * sda = SDA pin (default 4 of ESP8266 boards)
 * addr = I2C address (default 0x60)
-* debug = output some info text via REPL/serial port window whenever you read data from the module.
+* debug = output some info text via REPL/serial port window whenever you read data from the module. Default False.
 * band = band limits; "US" (default) = US/Europe band (87.5-108 MHz), "JP" = Japan band (76-91 MHz)
 * stereo = stereo mode (default True; set as False = forced mono)
 * soft_mute = soft mute (default True)
@@ -51,15 +52,15 @@ radio = TEA5767.Radio(freq=99.7, scl=22, sda=21)
 ```
 ## Set/change frequency
 
-Directly choosing another frequency:
+Directly tuning to a specific frequency:
 
 ```python
 radio.set_frequency(freq=104.9)
 ```
 
-The TEA5767 would turn on the new frequency immediately.
+The TEA5767 would tune to the new frequency immediately.
 
-Or you can change the frequency bit by bit, like turning a tuning knob on radios:
+Or you can change the frequency bit by bit, like turning a knob on radios:
 
 ```python
 radio.change_freqency(change=0.1)
@@ -76,10 +77,11 @@ radio.search(mode=True, dir=1, adc=5)
 radio.search(mode=True, freq=90.0)
 ```
 
-When the search mode is on (True), the actual frequency may change right after you selected any frequency.
+When the search mode is on (True), the actual frequency may change after you selected the frequency. It may take a little while, so remember to use radio.read() (see below) to update frequency info.
 
 * dir = search direction; 1 means go up (default), 0 means go down on frequency.
 * adc = signal ADC resolution, default 5. The adc level can be set as 0 (no search), 5, 7 or 10.
+* freq = set a new frequency and search from there
 
 And if you change frequency by using radio.change_freqency(), the search direction will be set to the same direction of frequency change.
 
@@ -96,7 +98,7 @@ radio.mute(True)
 radio.standby(True)
 ```
 
-Mute is simply turn off the sound. If you want to save more power, use radio.standby().
+Mute is simply turning off the sound output. If you want to save more power, use radio.standby().
 
 The TEA5767 also allows you to turn off right or left speaker, however I did not implement these functions.
 
