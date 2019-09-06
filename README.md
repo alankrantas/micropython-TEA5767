@@ -1,4 +1,4 @@
-# MicroPython ESP8266/ESP32 driver for TEA5767 FM radio module (BETA)
+# MicroPython ESP8266/ESP32 Driver for TEA5767 FM Radio Module
 
 ![FQTC302J70QTXEA MEDIUM](https://user-images.githubusercontent.com/44191076/64347645-d7d66f00-d026-11e9-87b5-4ae21e6115e9.jpg)
 
