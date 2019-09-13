@@ -5,9 +5,9 @@ from machine import Pin, I2C
 
 class Radio:
     
-    def __init__(self, freq=0.0, scl=5, sda=4, addr=0x60, debug=False, band="US", 
-                 stereo=True, soft_mute=True, noise_cancel=True, high_cut=True):
-        self._i2c = I2C(scl=Pin(scl, Pin.IN, Pin.PULL_UP), sda=Pin(sda, Pin.IN, Pin.PULL_UP), freq=400000)
+    def __init__(self, i2c, addr=0x60, freq=0.0, band="US", stereo=True,
+                 soft_mute=True, noise_cancel=True, high_cut=True):
+        self._i2c = i2c
         self._address = addr
         self.frequency = freq
         self.band_limits = band
@@ -23,7 +23,6 @@ class Radio:
         self.is_ready = False
         self.is_stereo = False
         self.signal_adc_level = 0
-        self.debug = debug
         if self.frequency > 0.0:
             self.update()
 
@@ -104,10 +103,3 @@ class Radio:
         self.is_ready = int(buf[0]) >> 7 == 1
         self.is_stereo = int(buf[2]) >> 7 == 1
         self.signal_adc_level = int(buf[3]) >> 4
-        if self.debug:
-            print("FM frequency: " + str(self.frequency) + " MHz")
-            print("Search mode: " + str(self.search_mode))
-            print("Station ready: " + str(self.is_ready))
-            print("Signal is stereo: " + str(self.is_stereo))
-            print("Signal ADC resolution: " + str(self.signal_adc_level))
-            print("")
