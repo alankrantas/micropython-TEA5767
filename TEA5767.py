@@ -7,7 +7,7 @@ class Radio:
     
     def __init__(self, freq=0.0, scl=5, sda=4, addr=0x60, debug=False, band="US", 
                  stereo=True, soft_mute=True, noise_cancel=True, high_cut=True):
-        self._i2c = I2C(scl=Pin(scl), sda=Pin(sda), freq=400000)
+        self._i2c = I2C(scl=Pin(scl, Pin.IN, Pin.PULL_UP), sda=Pin(sda, Pin.IN, Pin.PULL_UP), freq=400000)
         self._address = addr
         self.frequency = freq
         self.band_limits = band
@@ -55,6 +55,15 @@ class Radio:
         self.update()
 
     def update(self):
+        freq_min = 87.5
+        freq_max = 108.0
+        if self.band_limits == "JP":
+            freq_min = 76.0
+            freq_min = 91.0
+        if self.frequency < freq_min:
+            self.frequency = freq_min
+        elif self.frequency > freq_max:
+            self.frequency = freq_max
         freqB = 4 * (self.frequency * 1000000 + 225000) / 32768
         freqH = int(freqB) >> 8
         freqL = int(freqB) & 0Xff
