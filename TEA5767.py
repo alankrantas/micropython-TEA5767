@@ -23,23 +23,19 @@ class Radio:
         self.is_ready = False
         self.is_stereo = False
         self.signal_adc_level = 0
-        if self.frequency > 0.0:
-            self.update()
+        self.update()
 
     def set_frequency(self, freq=0.0):
-        if self.frequency > 0.0:
-            self.frequency = freq
-            self.update()
+        self.frequency = freq
+        self.update()
 
     def change_freqency(self, change=0.1):
-        if self.frequency + change > 0.0:
-            self.frequency += change
-            self.search_direction = 1 if change >= 0 else 0
-            self.update()
+        self.frequency += change
+        self.search_direction = 1 if change >= 0 else 0
+        self.update()
 
     def search(self, mode=True, dir=1, adc=5, freq=0.0):
-        if freq > 0.0:
-            self.frequency = freq
+        self.frequency = freq
         self.search_mode = mode
         self.search_direction = dir
         self.search_adc_level = adc if adc in [10, 7, 5, 0] else 5
