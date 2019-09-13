@@ -1,10 +1,10 @@
 # MicroPython ESP8266/ESP32 Driver for TEA5767 FM Radio Module
 
-![FQTC302J70QTXEA MEDIUM](https://user-images.githubusercontent.com/44191076/64347645-d7d66f00-d026-11e9-87b5-4ae21e6115e9.jpg)
+![41015747](https://user-images.githubusercontent.com/44191076/64875299-62e6e300-d67f-11e9-92d2-b0bdd43494aa.jpg)
 
-[TEA5767 modules](https://www.sparkfun.com/datasheets/Wireless/General/TEA5767.pdf) are one of the cheaper FM radio receiver modules, which allow you to build DIY FM radios real quick.
+[TEA5767](https://www.sparkfun.com/datasheets/Wireless/General/TEA5767.pdf) is one of the cheaper FM radio receiver modules, which allow you to build DIY FM radios real quick. It comes with an antenna with a 3.5mm audio jack but with does not have volume control.
 
-This is the driver for MicroPython on ESP8266/ESP32 boards. I've tested it on my NodeMCU V2, WeMos D1 mini (ESP8266s running firmware esp8266-20190529-v1.11) and BPI:bit (ESP32 running esp32-20190906-v1.11).
+This is the driver for MicroPython on ESP8266/ESP32 boards. I've tested it on NodeMCU V2 and WeMos D1 mini (ESP8266s running firmware esp8266-20190529-v1.11) as well as BPI:bit and DOIT ESP32 DevKit V1 (ESP32 running esp32-20190906-v1.11-37).
 
 ## Wiring
 
@@ -56,6 +56,8 @@ from TEA5767 import Radio
 i2c = I2C(scl=Pin(22), sda=Pin(21), freq=400000)
 radio = Radio(i2c, freq=99.7)
 ```
+
+Other parameters are as same as above.
 
 ## Set/Change Frequency
 
