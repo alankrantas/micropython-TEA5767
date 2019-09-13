@@ -13,96 +13,104 @@ This is the driver for MicroPython on ESP8266/ESP32 boards. I've tested it on my
 * SLC -> SCL
 * GND -> GND
 
-## Import on ESP8266
+From personal experiments the TEA5767 works better (have better reception/sound quality) in 5V with sufficent power supply. The power from most MCU boards alone might give you a lot of noise.
 
-The simplest way is as below:
+## Import and Initialization on ESP8266
 
-```python
-import TEA5767
-
-radio = TEA5767.Radio(freq=99.7)
-```
-
-The module would immediately tune to the frequency. If you did not specify a frequency here, the TEA5767 would not do anything.
-
-There are also some other options:
+To import and initialize the module:
 
 ```python
-radio = TEA5767.Radio(freq=99.7, scl=5, sda=4, addr=0x60, debug=True, band="US", 
-                      stereo=True, soft_mute=True, noise_cancel=True, high_cut=True)
+from machine import Pin, I2C
+from TEA5767 import Radio
+
+i2c = I2C(scl=Pin(5), sda=Pin(4), freq=400000)
+radio = Radio(i2c, freq=99.7)
 ```
 
-* freq = FM frequency
-* scl = SCL pin (default 5 of ESP8266 boards)
-* sda = SDA pin (default 4 of ESP8266 boards)
-* addr = I2C address (default 0x60)
-* debug = output some info text via REPL/serial port window whenever you read data from the module. Default False.
-* band = band limits; "US" (default) = US/Europe band (87.5-108 MHz), "JP" = Japan band (76-91 MHz)
-* stereo = stereo mode (default True; set as False = forced mono)
-* soft_mute = soft mute (default True)
-* noise_cancel = stereo noise cancelling (default True)
-* high_cut = high cut control (default True)
+The module would immediately tune to the frequency. If you did not specify a frequency here, the TEA5767 would set to lowest freqency of current band limit (see below).
 
-## Import on ESP32
-
-It's basic the same as ESP8266, however you'll have to specify the SCL and SDA pins as 22 and 21:
+There are also a series of parameters you can set:
 
 ```python
-radio = TEA5767.Radio(freq=99.7, scl=22, sda=21)
+radio = TEA5767.Radio(i2c, addr=0x60, freq=99.7, band="US", stereo=True,
+                      soft_mute=True, noise_cancel=True, high_cut=True)
 ```
-## Set/change frequency
 
-Directly tuning to a specific frequency:
+* i2c: MicroPython I2C object
+* addr: I2C address (default 0x60)
+* freq: FM frequency
+* band: band limits; "US" (default) = US/Europe band (87.5-108 MHz), "JP" = Japan band (76-91 MHz)
+* stereo: stereo mode (default True; set as False = forced mono)
+* soft_mute: soft mute (noise control, default True)
+* noise_cancel: stereo noise cancelling (default True)
+* high_cut: high cut control (noise control, default True)
+
+## Import and Initialization on ESP32
+
+It's basic the same as ESP8266, however the SCL and SDA pins are 22 and 21 respectively:
 
 ```python
-radio.set_frequency(freq=104.9)
+from machine import Pin, I2C
+from TEA5767 import Radio
+
+i2c = I2C(scl=Pin(22), sda=Pin(21), freq=400000)
+radio = Radio(i2c, freq=99.7)
 ```
 
-The TEA5767 would tune to the new frequency immediately.
+## Set/Change Frequency
 
-Or you can change the frequency bit by bit, like turning a knob on radios:
+Tuning to a specific frequency:
+
+```python
+radio.set_frequency(freq=99.7)
+```
+
+The frequency would not go beyond current band limit.
+
+Or you can change the currently frequency by some degree (takes effect immediately), like turning a knob on radios:
 
 ```python
 radio.change_freqency(change=0.1)
 radio.change_freqency(change=-0.1)
 ```
 
-## Search mode
+## Search Mode
 
-You can set the TEA5756 to auto-select a possible working station near a specific frequency:
+You can set the TEA5756 to half-auto select a possible working station near a frequency:
 
 ```python
 radio.search(True)
+radio.search(False)
 radio.search(mode=True, dir=1, adc=5)
 radio.search(mode=True, freq=90.0)
 ```
 
-When the search mode is on (True), the actual frequency may change after you selected the frequency. It may take a little while, so remember to use radio.read() (see below) to update frequency info.
+When the search mode is turned on (True), the actual frequency may change after you selected the frequency. It may take a little while - you'll have to keep calling <b>radio.read()</b> and read the value <b>radio.frequency</b> (see below).
 
-* dir = search direction; 1 means go up (default), 0 means go down on frequency.
-* adc = signal ADC resolution, default 5. The adc level can be set as 0 (no search), 5, 7 or 10.
-* freq = set a new frequency and search from there
+* dir = search direction; 1 means go up on the frequency (default), 0 means go down.
+* adc = signal ADC resolution (sound quality), default 5. The adc level can be set as 0 (no search), 5, 7 or 10. In search mode the TEA5767 would search stations with ADC resolution higher than the level you select.
+* freq = set a new frequency to search from there
 
-And if you change frequency by using radio.change_freqency(), the search direction will be set to the same direction of frequency change.
+And if you call <b>radio.change_freqency()</b>, the search mode direction will be set to the same direction of frequency change.
 
-Turn the search mode off is simply
+To toogle search mode:
 
 ```python
-radio.search(False)
+radio.search(not radio.search_mode)
 ```
 
-## Mute/standby
+## Mute/Standby Mode
 
 ```python
 radio.mute(True)
 radio.standby(True)
 ```
 
-Mute is simply turning off the sound output. If you want to save more power, use radio.standby().
+Mute is simply turning off the sound output. If you want to save power, use <b>radio.standby()</b>.
 
-The TEA5767 also allows you to turn off right or left speaker, however I did not implement these functions.
+The TEA5767 also allows you to turn off right and/or left speaker, but I did not implement these functions.
 
-## Read data
+## Read Data
 
 You can retrieve some info from the TEA5767:
 
@@ -110,17 +118,7 @@ You can retrieve some info from the TEA5767:
 radio.read()
 ```
 
-If the debug option in initialization is set to True, you'll see some output text in REPL/serial port window:
-
-```
-FM frequency: 99.7 MHz
-In search mode: False
-Station ready: True
-Station has stereo: True
-Signal ADC level: 10
-```
-
-You can also read these info via
+Then you can also get the following values:
 
 ```python
 my_variable = radio.frequency
@@ -130,7 +128,13 @@ my_variable = radio.is_stereo
 my_variable = radio.signal_adc_level
 ```
 
-## A simplified version
+* radio.frequency: current frequency, float number (may change due to enabling search mode)
+* radio.search_mode: search mode status (True/False)
+* radio.is_ready: station is ready, probably meaning the signal is strong enough? (True/False)
+* radio.is_stereo: stereo mode status (True/False)
+* radio.signal_adc_level: station ADC resolution (0, 5, 7 or 10)
+
+## A Simplified Version Without Using Module
 
 If you just want to tune the frequency of TEA5767, you can use code as short as below (simply paste it into your script):
 
@@ -152,8 +156,8 @@ def radio_frequency(freq):
 radio_frequency(99.7)
 ```
 
-Call radio_frequency() to change the radio frequency.
+Call <b>radio_frequency()</b> to change the radio frequency.
 
-This code does not enable search mode but also turns on stereo mode, soft mute, stereo noise cancelling and high cut.
+This code does not enable search mode but turns on stereo mode, soft mute, stereo noise cancelling and high cut.
 
-For ESP32 boards SCL pin=22 and SDA pin=21.
+For ESP32 boards set SCL pin=22 and SDA pin=21.
