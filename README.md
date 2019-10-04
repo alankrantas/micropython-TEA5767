@@ -32,7 +32,7 @@ The module would immediately tune to the frequency. If you did not specify a fre
 There are also a series of parameters you can set:
 
 ```python
-radio = TEA5767.Radio(i2c, addr=0x60, freq=99.7, band="US", stereo=True,
+radio = Radio(i2c, addr=0x60, freq=99.7, band="US", stereo=True,
                       soft_mute=True, noise_cancel=True, high_cut=True)
 ```
 
@@ -83,15 +83,14 @@ You can set the TEA5756 to half-auto select a possible working station near a fr
 ```python
 radio.search(True)
 radio.search(False)
-radio.search(mode=True, dir=1, adc=5)
-radio.search(mode=True, freq=90.0)
+radio.search(mode=True)
+radio.search(mode=True, dir=1, adc=7)
 ```
 
 When the search mode is turned on (True), the actual frequency may change after you selected the frequency. It may take a little while - you'll have to keep calling <b>radio.read()</b> and read the value <b>radio.frequency</b> (see below).
 
 * dir = search direction; 1 means go up on the frequency (default), 0 means go down.
-* adc = signal ADC resolution (sound quality), default 5. The adc level can be set as 0 (no search), 5, 7 or 10. In search mode the TEA5767 would search stations with ADC resolution higher than the level you select.
-* freq = set a new frequency to search from there
+* adc = signal ADC resolution (sound quality), default 7. The adc level can be set as 0 (no search), 5, 7 or 10. In search mode the TEA5767 would search stations with ADC resolution higher than the level you select.
 
 And if you call <b>radio.change_freqency()</b>, the search mode direction will be set to the same direction of frequency change.
 
