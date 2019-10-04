@@ -16,7 +16,7 @@ class Radio:
         self.soft_mute_mode = soft_mute
         self.search_mode = False
         self.search_direction = 1
-        self.search_adc_level = 5
+        self.search_adc_level = 7
         self.stereo_mode = stereo
         self.stereo_noise_cancelling_mode = noise_cancel
         self.high_cut_mode = high_cut
@@ -34,11 +34,10 @@ class Radio:
         self.search_direction = 1 if change >= 0 else 0
         self.update()
 
-    def search(self, mode=True, dir=1, adc=5, freq=0.0):
-        self.frequency = freq
+    def search(self, mode=True, dir=1, adc=7):
         self.search_mode = mode
         self.search_direction = dir
-        self.search_adc_level = adc if adc in [10, 7, 5, 0] else 5
+        self.search_adc_level = adc if adc in [10, 7, 5, 0] else 7
         self.update()
 
     def mute(self, mode=True):
