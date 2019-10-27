@@ -4,7 +4,7 @@
 
 [TEA5767](https://www.sparkfun.com/datasheets/Wireless/General/TEA5767.pdf) is one of the cheaper FM radio receiver modules, which allow you to build DIY FM radios real quick. It comes with an antenna with a 3.5mm audio jack but with does not have volume control.
 
-This is the driver for MicroPython on ESP8266/ESP32 boards. I've tested it on NodeMCU V2 and WeMos D1 mini (ESP8266s running firmware v1.11-8) as well as BPI:bit and DOIT ESP32 DevKit V1 (ESP32 running v1.11-37).
+This is the driver for MicroPython on ESP8266/ESP32 boards. I've tested it on NodeMCU V2 and WeMos D1 mini (ESP8266s running firmware v1.11) as well as BPI:bit and DOIT ESP32 DevKit V1 (ESP32 running v1.11).
 
 ## Wiring
 
