@@ -47,7 +47,7 @@ radio = Radio(i2c, addr=0x60, freq=99.7, band="US", stereo=True,
 
 ## Import and Initialization on ESP32
 
-It's basic the same as ESP8266, however the SCL and SDA pins are 22 and 21 respectively:
+It's basic the same as ESP8266, however you may need to assign different SCL and SDA pins:
 
 ```python
 from machine import Pin, I2C
@@ -160,5 +160,3 @@ radio_frequency(99.7)
 Call <b>radio_frequency()</b> to change the radio frequency.
 
 This code does not enable search mode but turns on stereo mode, soft mute, stereo noise cancelling and high cut.
-
-For ESP32 boards set SCL pin=22 and SDA pin=21.
