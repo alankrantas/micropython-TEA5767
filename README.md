@@ -4,7 +4,7 @@
 
 [TEA5767](https://www.sparkfun.com/datasheets/Wireless/General/TEA5767.pdf) is one of the cheaper FM radio receiver modules, which allow you to build DIY FM radios real quick. It comes with an antenna with a 3.5mm audio jack but with does not have volume control.
 
-This is the driver for MicroPython on ESP8266/ESP32 boards. I've tested it on NodeMCU V2 and WeMos D1 mini (ESP8266s running firmware v1.11) as well as BPI:bit and DOIT ESP32 DevKit V1 (ESP32 running v1.11).
+This is the driver for MicroPython on ESP8266/ESP32 boards. I've tested it on NodeMCU V2 and WeMos D1 mini (ESP8266s running firmware v1.11) as well as BPI:bit and DOIT ESP32 DevKit V1 (ESP32s running v1.11).
 
 ## Wiring
 
@@ -15,7 +15,7 @@ This is the driver for MicroPython on ESP8266/ESP32 boards. I've tested it on No
 
 From personal experiments the TEA5767 works better (have better reception/sound quality) in 5V with sufficent power supply. The power from most MCU boards alone might give you a lot of noise.
 
-## Import and Initialization on ESP8266
+## Import and Initialize on ESP8266
 
 To import and initialize the module:
 
@@ -45,9 +45,9 @@ radio = Radio(i2c, addr=0x60, freq=99.7, band="US", stereo=True,
 * noise_cancel: stereo noise cancelling (default True)
 * high_cut: high cut control (noise control, default True)
 
-## Import and Initialization on ESP32
+## Import and Initialize on ESP32
 
-It's basic the same as ESP8266, however you may need to assign different SCL and SDA pins:
+It's the same as ESP8266. SCL and SDA can be set to any 2 GPIO pins:
 
 ```python
 from machine import Pin, I2C
@@ -56,8 +56,6 @@ from TEA5767 import Radio
 i2c = I2C(scl=Pin(22), sda=Pin(21), freq=400000)
 radio = Radio(i2c, freq=99.7)
 ```
-
-Other parameters are as same as above.
 
 ## Set/Change Frequency
 
@@ -111,7 +109,7 @@ Mute is simply turning off the sound output. If you want to save power, use <b>r
 
 The TEA5767 also allows you to turn off right and/or left speaker, but I did not implement these functions.
 
-## Read Data
+## Read Data From the Module
 
 You can retrieve some info from the TEA5767:
 
@@ -135,7 +133,7 @@ my_variable = radio.signal_adc_level
 * radio.is_stereo: stereo mode status (True/False)
 * radio.signal_adc_level: station ADC resolution (0, 5, 7 or 10)
 
-## A Simplified Version Without Using Module
+## A Simplified MicroPython Version Without Using This Driver
 
 If you just want to tune the frequency of TEA5767, you can use code as short as below (simply paste it into your script):
 
