@@ -114,7 +114,6 @@ You may need to call it multiple times when the search mode is enabled (because 
 
 ```python
 radio.update()
-radio.update(read=False) # update but do not call radio.read()
 ```
 
 This method will be automatically called by many other methods of the radio. If you wish to change some parameters, you can manually call <b>radio.update()</b> to update radio.
@@ -125,7 +124,7 @@ radio.stereo_noise_cancelling_mode = True
 radio.high_cut_mode = True
 ```
 
-By default <b>radio.update()</b> will call <b>radio.read()</b> at the end. However, You can set the <b>read</b> parameter to False if you want to speed thing up a little bit.
+By default <b>radio.update()</b> will call <b>radio.read()</b> at the end.
 
 ## A Simplified MicroPython Version Without Using This Driver
 
