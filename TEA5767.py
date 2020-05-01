@@ -62,17 +62,17 @@ class Radio:
         self.search_direction = 1 if change >= 0 else 0
         self.update()
 
-    def search(self, mode=True, dir=1, adc=7):
+    def search(self, mode, dir=1, adc=7):
         self.search_mode = mode
         self.search_direction = dir
         self.search_adc_level = adc if adc in (10, 7, 5, 0) else 7
         self.update()
 
-    def mute(self, mode=True):
+    def mute(self, mode):
         self.mute_mode = mode
         self.update()
         
-    def standby(self, mode=True):
+    def standby(self, mode):
         self.standby_mode = mode
         self.update()
 
@@ -84,7 +84,7 @@ class Radio:
         self.is_stereo = int(buf[2]) >> 7 == 1
         self.signal_adc_level = int(buf[3]) >> 4
 
-    def update(self, read=False):
+    def update(self):
         buf = bytearray(5)
         cmd = ''
         if self.band_limits == 'US':
@@ -128,5 +128,4 @@ class Radio:
         buf[3] = int(cmd, 2)
         buf[4] = 0
         self._i2c.writeto(self._address, buf)
-        if read:
-            self.read()
+        self.read()
