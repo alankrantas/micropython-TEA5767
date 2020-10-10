@@ -78,11 +78,11 @@ class Radio:
 
     def read(self):
         buf = self._i2c.readfrom(self._address, 5)
-        freqB = ('{:08b}'.format(int(buf[0])))[2:8] + '{:08b}'.format(int(buf[1]))
-        self.frequency = round(((int(freqB, 2) * 32768 / 4) - 225000) / 1000000, 1)
-        self.is_ready = int(buf[0]) >> 7 == 1
-        self.is_stereo = int(buf[2]) >> 7 == 1
-        self.signal_adc_level = int(buf[3]) >> 4
+        freqB = int((buf[0] & 0x3f) * (1 << 8) + buf[1])
+        self.frequency = round((freqB * 32768 / 4 - 225000) / 1000000, 1)
+        self.is_ready = int(buf[0] >> 7) == 1
+        self.is_stereo = int(buf[2] >> 7) == 1
+        self.signal_adc_level = int(buf[3] >> 4)
 
     def update(self):
         buf = bytearray(5)
@@ -93,39 +93,40 @@ class Radio:
             elif self.frequency > self.FREQ_RANGE_US[1]:
                 self.frequency = self.FREQ_RANGE_US[1]
         else:
+            self.band_limits = 'JP'
             if self.frequency < self.FREQ_RANGE_JP[0]:
                 self.frequency = self.FREQ_RANGE_JP[0]
             elif self.frequency > self.FREQ_RANGE_JP[1]:
                 self.frequency = self.FREQ_RANGE_JP[1]
         freqB = 4 * (self.frequency * 1000000 + 225000) / 32768
-        freqH = int(freqB) >> 8
-        freqL = int(freqB) & 0Xff
-        cmd = '1' if self.mute_mode else '0'
-        cmd += '1' if self.search_mode else '0'
-        buf[0] = int(cmd + '{:06b}'.format(freqH), 2)
-        buf[1] = freqL
-        cmd = '1' if self.search_direction == '1' else '0'
+        buf[0] = int(freqB) >> 8
+        if self.mute_mode:
+            buf[0] += 1 << 7
+        if self.search_mode:
+            buf[0] += 1 << 6
+        buf[1] = int(freqB) & 0xff
+        buf[2] = 1 << 4
+        if self.search_direction == 1:
+            buf[2] += 1 << 7
         if self.search_adc_level == 10:
-            cmd += '11'
+            buf[2] += 3 << 5
         elif self.search_adc_level == 7:
-            cmd += '10'
+            buf[2] += 2 << 5
         elif self.search_adc_level == 5:
-            cmd += '01'
-        else:
-            cmd += '00'
-        cmd += '1'
-        cmd += '0' if self.stereo_mode else '1'
-        cmd += '000'
-        buf[2] = int(cmd, 2)
-        cmd = '0'
-        cmd += '1' if self.standby_mode else '0'   
-        cmd += '1' if self.band_limits == 'JP' else '0'
-        cmd += '1'
-        cmd += '1' if self.soft_mute_mode else '0'
-        cmd += '1' if self.high_cut_mode else '0'  
-        cmd += '1' if self.stereo_noise_cancelling_mode else '0'
-        cmd += '0'
-        buf[3] = int(cmd, 2)
+            buf[2] += 1 << 5
+        if self.stereo_mode:
+            buf[2] += 1 << 3
+        buf[3] = 1 << 4
+        if self.standby_mode:
+            buf[3] += 1 << 6
+        if self.band_limits == 'JP':
+            buf[3] += 1 << 5
+        if self.soft_mute_mode:
+            buf[3] += 1 << 3
+        if self.high_cut_mode:
+            buf[3] += 1 << 2
+        if self.stereo_noise_cancelling_mode:
+            buf[3] += 1 << 1
         buf[4] = 0
         self._i2c.writeto(self._address, buf)
         self.read()
