@@ -18,10 +18,10 @@ This driver has been tested on ESP8266 and ESP32 boards running MicroPython v1.1
 To import and initialize the module:
 
 ```python
-from machine import Pin, I2C
+from machine import Pin, SoftI2C
 from TEA5767 import Radio
 
-i2c = I2C(scl=Pin(5), sda=Pin(4), freq=400000) # change the pins if you are using ESP32
+i2c = SoftI2C(scl=Pin(5), sda=Pin(4), freq=400000)
 radio = Radio(i2c) # initialize and set to the lowest frequency
 radio = Radio(i2c, freq=99.7)  # initialize and set to a specific frequency
 ```
@@ -82,7 +82,7 @@ radio.mute(True)
 radio.standby(True)
 ```
 
-<b>radio.mute()</b> is simply turning off the sound output. If you want to save power, use <b>radio.standby() instead</b>.
+<b>radio.mute()</b> is simply turning off the sound output. If you want to save power, use <b>radio.standby()</b> instead.
 
 The TEA5767 also allows you to turn off right and/or left speaker, but I decided not to implement these functions.
 
@@ -131,19 +131,13 @@ By default <b>radio.update()</b> will call <b>radio.read()</b> at the end.
 If you just want to tune the frequency of TEA5767, you can use code as short as below (simply paste it into your script):
 
 ```python
-from machine import Pin, I2C
+from machine import Pin, SoftI2C
 
-i2c = I2C(scl=Pin(5), sda=Pin(4), freq=400000)
+i2c = SoftI2C(scl=Pin(5), sda=Pin(4), freq=400000)
 
 def radio_frequency(freq):
     freqB = 4 * (freq * 1000000 + 225000) / 32768
-    buf = bytearray(5)
-    buf[0] = int(freqB) >> 8
-    buf[1] = int(freqB) & 0XFF
-    buf[2] = 0X90
-    buf[3] = 0X1E
-    buf[4] = 0X00
-    i2c.writeto(0x60, buf)
+    i2c.writeto(0x60, bytearray([int(freqB) >> 8, int(freqB) & 0XFF, 0X90, 0X1E, 0X00]))
     
 radio_frequency(99.7)
 ```
