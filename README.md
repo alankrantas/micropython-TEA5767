@@ -4,7 +4,7 @@
 
 [TEA5767](https://www.sparkfun.com/datasheets/Wireless/General/TEA5767.pdf) is a cheap FM radio module, which allow you to build DIY FM radios. It comes with an antenna via a 3.5mm audio jack but have no internal volume control. 
 
-This driver has been tested on ESP8266 and ESP32 boards running MicroPython v1.12.
+This driver has been tested on ESP8266, ESP32 and RPi running MicroPython v1.16.
 
 ## Wiring
 
