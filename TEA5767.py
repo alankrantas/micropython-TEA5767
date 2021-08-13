@@ -29,12 +29,19 @@ SOFTWARE.
 """
 
 class Radio:
+    """
+   TEA5767 FM radio driver class.
+    
+    Initialize:
+        radio = TEA5767.Radio(i2c, [addr=0x60, freq=99.7, band="US", stereo=True,
+                                    soft_mute=True, noise_cancel=True, high_cut=True])
+    """
     
     FREQ_RANGE_US = (87.5, 108.0)
     FREQ_RANGE_JP = (76.0, 91.0)
     
     def __init__(self, i2c, addr=0x60, freq=0.0, band='US', stereo=True,
-                 soft_mute=True, noise_cancel=True, high_cut=True):
+                            soft_mute=True, noise_cancel=True, high_cut=True):
         self._i2c = i2c
         self._address = addr
         self.frequency = freq
@@ -86,7 +93,6 @@ class Radio:
 
     def update(self):
         buf = bytearray(5)
-        cmd = ''
         if self.band_limits == 'US':
             if self.frequency < self.FREQ_RANGE_US[0]:
                 self.frequency = self.FREQ_RANGE_US[0]
