@@ -2,16 +2,20 @@
 
 ![41015747](https://user-images.githubusercontent.com/44191076/64875299-62e6e300-d67f-11e9-92d2-b0bdd43494aa.jpg)
 
-[TEA5767](https://www.sparkfun.com/datasheets/Wireless/General/TEA5767.pdf) is a cheap FM radio module, which allow you to build DIY FM radios. It comes with an antenna via a 3.5mm audio jack but have no internal volume control. 
+[TEA5767](https://www.sparkfun.com/datasheets/Wireless/General/TEA5767.pdf) is a cheap but functional FM radio module, which allow you to build DIY FM radios. It comes with an antenna via a 3.5mm audio jack but have no internal volume control. 
 
 This driver has been tested on ESP8266, ESP32 and RPi running MicroPython v1.16.
 
 ## Wiring
 
-* +5V -> power (both 3.3V and 5V works; 5V may results better sound quality)
-* SDA -> SDA pin
-* SLC -> SCL pin
-* GND -> GND
+| Pin | Connect to |
+| --- | --- |
+| +5V | 3.3V or 5V |
+| SDA | SDA |
+| SLC | SCL |
+| GND | GND |
+
+Both 3.3V and 5V power works; 5V may results better sound quality.
 
 ## Import and Initialize
 
@@ -26,21 +30,27 @@ radio = Radio(i2c) # initialize and set to the lowest frequency
 radio = Radio(i2c, freq=99.7)  # initialize and set to a specific frequency
 ```
 
-There are a series of parameters you can set as well:
+You can use ```I2C``` module on pins that supported hardware I2C bus.
+
+## Parameters
+
+There are a list of parameters that you can set for the radio:
 
 ```python
 radio = Radio(i2c, addr=0x60, freq=99.7, band="US", stereo=True,
                       soft_mute=True, noise_cancel=True, high_cut=True)
 ```
 
-* i2c: MicroPython I2C object
-* addr: I2C address (default 0x60)
-* freq: FM frequency
-* band: band limits; "US" (default) = US/Europe band (87.5-108 MHz); "JP" = Japan band (76-91 MHz)
-* stereo: stereo mode (default True; set as False = forced mono)
-* soft_mute: soft mute (noise control, default True)
-* noise_cancel: stereo noise cancelling (default True)
-* high_cut: high cut control (noise control, default True)
+| Parameter | description |
+| --- | --- |
+| i2c | machine.I2C or machine.SoftI2C object |
+| addr | I2C address (default 0x60) |
+| freq | FM frequency (default = lowest freq by the band setting) |
+| band | band limits; "US" (default) = US/Europe band (87.5-108 MHz); "JP" = Japan band (76-91 MHz) |
+| stereo | stereo mode (default True = use stereo sound if possible; False = forced mono) |
+| soft_mute | soft mute mode (noise control, default True) |
+| noise_cancel | stereo noise cancelling (default True) |
+| high_cut | high cut control (noise control, default True) |
 
 ## Set Frequency
 
@@ -82,7 +92,7 @@ radio.mute(True)
 radio.standby(True)
 ```
 
-<b>radio.mute()</b> is simply turning off the sound output. If you want to save power, use <b>radio.standby()</b> instead.
+```radio.mute()``` is simply turning off the sound output. If you want to save power, use ```radio.standby()``` instead.
 
 The TEA5767 also allows you to turn off right and/or left speaker, but I decided not to implement these functions.
 
@@ -116,7 +126,7 @@ You may need to call it multiple times when the search mode is enabled (because 
 radio.update()
 ```
 
-This method will be automatically called by many other methods of the radio. If you wish to change some parameters, you can manually call <b>radio.update()</b> to update radio.
+This method will be automatically called by many other methods of the radio. If you wish to change some parameters, you can manually call ```radio.update()``` to update radio.
 
 ```python
 radio.stereo_mode = True
@@ -124,7 +134,7 @@ radio.stereo_noise_cancelling_mode = True
 radio.high_cut_mode = True
 ```
 
-By default <b>radio.update()</b> will call <b>radio.read()</b> at the end.
+By default ```radio.update()``` will call <b>radio.read()</b> at the end.
 
 ## A Simplified MicroPython Version Without Using This Driver
 
@@ -142,6 +152,6 @@ def radio_frequency(freq):
 radio_frequency(99.7)
 ```
 
-Then simply call <b>radio_frequency()</b> to change the radio frequency.
+Then simply call ```radio_frequency()``` to change the radio frequency.
 
 This code does not enable search mode but turns on stereo mode, soft mute, stereo noise cancelling and high cut.
