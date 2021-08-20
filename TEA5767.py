@@ -96,7 +96,6 @@ class Radio:
         self.signal_adc_level = int(buf[3] >> 4)
 
     def update(self):
-        
         if self.band_limits == 'JP':
             self.frequency = min(max(self.frequency, Radio.FREQ_RANGE_JP[0]), Radio.FREQ_RANGE_JP[1])
         else:
