@@ -26,8 +26,12 @@ from machine import Pin, SoftI2C
 from TEA5767 import Radio
 
 i2c = SoftI2C(scl=Pin(5), sda=Pin(4), freq=400000)
-radio = Radio(i2c) # initialize and set to the lowest frequency
+radio = Radio(i2c)  # initialize and set to the lowest frequency
 radio = Radio(i2c, freq=99.7)  # initialize and set to a specific frequency
+
+print('Frequency: FM {}\nReady: {}\nStereo: {}\nADC level: {}'.format(
+        radio.frequency, radio.is_ready,  radio.is_stereo, radio.signal_adc_level
+        ))
 ```
 
 You can use ```I2C``` module on pins that supported hardware I2C bus.
@@ -57,14 +61,14 @@ radio = Radio(i2c, addr=0x60, freq=99.7, band="US", stereo=True,
 Set the radio to a specific frequency:
 
 ```python
-radio.set_frequency(99.7)
+radio.set_frequency(99.7)  # set to FM 99.7
 ```
 
 ## Change Frequency
 
 ```python
-radio.change_freqency(0.1) # increase 0.1 MHz
-radio.change_freqency(-0.1) # decrease 0.1 MHz
+radio.change_freqency(0.1)  # increase 0.1 MHz
+radio.change_freqency(-0.1)  # decrease 0.1 MHz
 ```
 
 These methods also will change the direction of search mode (see below).
@@ -72,10 +76,10 @@ These methods also will change the direction of search mode (see below).
 ## Search Mode
 
 ```python
-radio.search(True) # turn on search mode
-radio.search(False) # turn off search mode
-radio.search(not radio.search_mode) # toogle search mode
-radio.search(True, dir=1, adc=7) # turn on search mode and set search parameters
+radio.search(True)  # turn on search mode
+radio.search(False)  # turn off search mode
+radio.search(not radio.search_mode)  # toogle search mode
+radio.search(True, dir=1, adc=7)  # turn on search mode and set search parameters
 ```
 
 If the search mode is enabled, the radio would attempt to find a station with strong signal whenever you set a new frequency.
@@ -98,7 +102,10 @@ The TEA5767 also allows you to turn off right and/or left speaker, but I decided
 
 ## Read Status From the Radio
 
+Some variables will be updated after calling ```radio.read()```:
+
 ```python
+radio.read()
 my_variable = radio.frequency
 my_variable = radio.search_mode
 my_variable = radio.is_ready
@@ -112,13 +119,7 @@ my_variable = radio.signal_adc_level
 * radio.is_stereo: stereo mode status? (True/False)
 * radio.signal_adc_level: station ADC resolution? (0, 5, 7 or 10)
 
-To update these data:
-
-```python
-radio.read() # update radio status
-```
-
-You may need to call it multiple times when the search mode is enabled (because radio.frequency would be changed).
+You may need to call it a few times with some time delay when the search mode is enabled (the radio frequency would jump around a bit).
 
 ## Manually Update the Radio
 
@@ -132,9 +133,10 @@ This method will be automatically called by many other methods of the radio. If 
 radio.stereo_mode = True
 radio.stereo_noise_cancelling_mode = True
 radio.high_cut_mode = True
+radio.update()
 ```
 
-By default ```radio.update()``` will call <b>radio.read()</b> at the end.
+By default ```radio.update()``` will wait 50 ms at the end and then call ```radio.read()```.
 
 ## A Simplified MicroPython Version Without Using This Driver
 
@@ -152,6 +154,4 @@ def radio_frequency(freq):
 radio_frequency(99.7)
 ```
 
-Then simply call ```radio_frequency()``` to change the radio frequency.
-
-This code does not enable search mode but turns on stereo mode, soft mute, stereo noise cancelling and high cut.
+This code does not read anything back and don't use enable search mode, but turn on stereo mode, soft mute, stereo noise cancelling and high cut.
