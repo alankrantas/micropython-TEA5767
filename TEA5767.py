@@ -122,7 +122,7 @@ class Radio:
 if __name__ == '__main__':
     
     from machine import Pin, SoftI2C
-    i2c = SoftI2C(scl=Pin(27), sda=Pin(26), freq=400000)
+    i2c = SoftI2C(scl=Pin(5), sda=Pin(4), freq=400000)
     
     radio = Radio(i2c, freq=99.7)
     print('Frequency: FM {}\nReady: {}\nStereo: {}\nADC level: {}'.format(
