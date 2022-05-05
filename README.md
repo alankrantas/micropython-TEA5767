@@ -1,10 +1,12 @@
-# MicroPython ESP8266/ESP32 Driver for TEA5767 FM Radio Module
+# MicroPython Driver for TEA5767 FM Radio Module
 
 ![41015747](https://user-images.githubusercontent.com/44191076/64875299-62e6e300-d67f-11e9-92d2-b0bdd43494aa.jpg)
 
 [TEA5767](https://www.sparkfun.com/datasheets/Wireless/General/TEA5767.pdf) is a cheap but functional FM radio module, which allow you to build DIY FM radios. It comes with an antenna via a 3.5mm jack but have no internal volume control. 
 
 This driver has been tested on ESP8266, ESP32 and RPi Pico running MicroPython v1.16.
+
+The CircuitPython version can be found [here](https://github.com/alankrantas/circuitpython-TEA5767).
 
 ## Wiring
 
